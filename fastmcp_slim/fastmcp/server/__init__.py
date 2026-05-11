@@ -1,7 +1,13 @@
 import importlib
 
-from .context import Context
-from .server import FastMCP, create_proxy
+try:
+    from .context import Context
+    from .server import FastMCP, create_proxy
+except ImportError as exc:
+    raise ImportError(
+        "FastMCP server support is not installed. Install "
+        "`fastmcp-slim[server]` or `fastmcp`."
+    ) from exc
 
 
 def __getattr__(name: str) -> object:

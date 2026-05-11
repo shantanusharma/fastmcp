@@ -40,9 +40,6 @@ from pydantic import (
 )
 from typing_extensions import Self, override
 
-from fastmcp.tools.tool_transform import ToolTransformConfig
-from fastmcp.utilities.types import FastMCPBaseModel
-
 if TYPE_CHECKING:
     from fastmcp.client.transports import (
         ClientTransport,
@@ -50,7 +47,6 @@ if TYPE_CHECKING:
         StdioTransport,
         StreamableHttpTransport,
     )
-    from fastmcp.server.server import FastMCP
 
 
 def infer_transport_type_from_url(
@@ -73,10 +69,21 @@ def infer_transport_type_from_url(
         return "http"
 
 
-class _TransformingMCPServerMixin(FastMCPBaseModel):
+def _coerce_tool_transform_configs(tools: dict[str, Any]) -> dict[str, Any]:
+    from fastmcp.tools.tool_transform import ToolTransformConfig
+
+    return {
+        name: config
+        if isinstance(config, ToolTransformConfig)
+        else ToolTransformConfig.model_validate(config)
+        for name, config in tools.items()
+    }
+
+
+class _TransformingMCPServerMixin(BaseModel):
     """A mixin that enables wrapping an MCP Server with tool transforms."""
 
-    tools: dict[str, ToolTransformConfig] = Field(default_factory=dict)
+    tools: dict[str, Any] = Field(default_factory=dict)
     """The multi-tool transform to apply to the tools."""
 
     include_tags: set[str] | None = Field(
@@ -114,40 +121,42 @@ class _TransformingMCPServerMixin(FastMCPBaseModel):
         self,
         server_name: str | None = None,
         client_name: str | None = None,
-    ) -> tuple[FastMCP[Any], ClientTransport]:
-        """Turn the Transforming MCPServer into a FastMCP Server and also return the underlying transport."""
-        from fastmcp.client import Client
-        from fastmcp.client.transports import (
-            ClientTransport,  # pyright: ignore[reportUnusedImport]
-        )
-        from fastmcp.server import create_proxy
+    ) -> tuple[Any, ClientTransport]:
+        """Turn the transforming server into a FastMCP proxy and return its transport."""
+        try:
+            from fastmcp import Client
+            from fastmcp.server import create_proxy
+            from fastmcp.server.transforms import ToolTransform
+        except ImportError as exc:
+            raise ImportError(
+                "MCP configs that use FastMCP-specific tool transforms or tag filters "
+                "require the full `fastmcp` package. Install it with `pip install fastmcp`."
+            ) from exc
 
-        transport: ClientTransport = super().to_transport()  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue, reportUnknownVariableType]  # ty: ignore[unresolved-attribute]
-        transport = cast(ClientTransport, transport)
-
-        client: Client[ClientTransport] = Client(transport=transport, name=client_name)
-
-        wrapped_mcp_server = create_proxy(
-            client,
-            name=server_name,
-        )
+        transport = cast("ClientTransport", super().to_transport())  # ty: ignore[unresolved-attribute]
+        client = Client(transport=transport, name=client_name)
+        wrapped_mcp_server = create_proxy(client, name=server_name)
 
         if self.include_tags is not None:
             wrapped_mcp_server.enable(tags=self.include_tags, only=True)
         if self.exclude_tags is not None:
             wrapped_mcp_server.disable(tags=self.exclude_tags)
-
-        # Apply tool transforms if configured
         if self.tools:
-            from fastmcp.server.transforms import ToolTransform
-
-            wrapped_mcp_server.add_transform(ToolTransform(self.tools))
+            wrapped_mcp_server.add_transform(
+                ToolTransform(_coerce_tool_transform_configs(self.tools))
+            )
 
         return wrapped_mcp_server, transport
 
     def to_transport(self) -> ClientTransport:
         """Get the transport for the transforming MCP server."""
-        from fastmcp.client.transports import FastMCPTransport
+        try:
+            from fastmcp.client.transports import FastMCPTransport
+        except ImportError as exc:
+            raise ImportError(
+                "MCP configs that use FastMCP-specific tool transforms or tag filters "
+                "require the full `fastmcp` package. Install it with `pip install fastmcp`."
+            ) from exc
 
         return FastMCPTransport(mcp=self._to_server_and_underlying_transport()[0])
 
@@ -238,7 +247,10 @@ class RemoteMCPServer(BaseModel):
     )  # Preserve unknown fields
 
     def to_transport(self) -> StreamableHttpTransport | SSETransport:
-        from fastmcp.client.transports import SSETransport, StreamableHttpTransport
+        from fastmcp.client.transports import (
+            SSETransport,
+            StreamableHttpTransport,
+        )
 
         if self.transport is None:
             transport = infer_transport_type_from_url(self.url)

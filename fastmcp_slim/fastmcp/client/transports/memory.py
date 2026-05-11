@@ -1,5 +1,7 @@
 import contextlib
+import importlib
 from collections.abc import AsyncIterator
+from typing import TYPE_CHECKING, Any
 
 import anyio
 from mcp import ClientSession
@@ -8,7 +10,9 @@ from mcp.shared.memory import create_client_server_memory_streams
 from typing_extensions import Unpack
 
 from fastmcp.client.transports.base import ClientTransport, SessionKwargs
-from fastmcp.server.server import FastMCP
+
+if TYPE_CHECKING:
+    from fastmcp.server.server import FastMCP
 
 
 class FastMCPTransport(ClientTransport):
@@ -20,7 +24,9 @@ class FastMCPTransport(ClientTransport):
     tests or scenarios where client and server run in the same runtime.
     """
 
-    def __init__(self, mcp: FastMCP | FastMCP1Server, raise_exceptions: bool = False):
+    def __init__(
+        self, mcp: "FastMCP[Any] | FastMCP1Server", raise_exceptions: bool = False
+    ):
         """Initialize a FastMCPTransport from a FastMCP server instance."""
 
         # Accept both FastMCP 2.x and FastMCP 1.0 servers. Both expose a
@@ -87,10 +93,22 @@ class FastMCPTransport(ClientTransport):
 
 @contextlib.asynccontextmanager
 async def _enter_server_lifespan(
-    server: FastMCP | FastMCP1Server,
+    server: "FastMCP[Any] | FastMCP1Server",
 ) -> AsyncIterator[None]:
     """Enters the server's lifespan context for FastMCP servers and does nothing for FastMCP 1 servers."""
-    if isinstance(server, FastMCP):
+    FastMCP2: type[Any] | None
+    try:
+        FastMCP2 = importlib.import_module("fastmcp.server.server").FastMCP
+    except ImportError:
+        FastMCP2 = None
+
+    if FastMCP2 is None and not isinstance(server, FastMCP1Server):
+        raise ImportError(
+            "In-memory FastMCP transports require the full `fastmcp` package. "
+            "Install it with `pip install fastmcp`."
+        )
+
+    if FastMCP2 is not None and isinstance(server, FastMCP2):
         async with server._lifespan_manager():
             yield
     else:

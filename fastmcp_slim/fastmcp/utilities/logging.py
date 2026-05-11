@@ -83,8 +83,14 @@ def configure_logging(
     # no path or level name to maximize width available for the traceback
     # suppress framework frames and limit the number of frames to 3
 
-    import mcp
     import pydantic
+
+    try:
+        import mcp
+    except ImportError:
+        tracebacks_suppress = [fastmcp, pydantic]
+    else:
+        tracebacks_suppress = [fastmcp, mcp, pydantic]
 
     # Build traceback kwargs with defaults that can be overridden
     traceback_kwargs = {
@@ -93,7 +99,7 @@ def configure_logging(
         "show_level": False,
         "rich_tracebacks": enable_rich_tracebacks,
         "tracebacks_max_frames": 3,
-        "tracebacks_suppress": [fastmcp, mcp, pydantic],
+        "tracebacks_suppress": tracebacks_suppress,
     }
     # Override defaults with user-provided values
     traceback_kwargs.update(rich_kwargs)

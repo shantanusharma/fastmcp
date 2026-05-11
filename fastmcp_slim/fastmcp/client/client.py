@@ -10,7 +10,7 @@ from collections.abc import Coroutine
 from contextlib import AsyncExitStack, asynccontextmanager, suppress
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Generic, Literal, TypeVar, cast, overload
+from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar, cast, overload
 
 import anyio
 import httpx
@@ -20,9 +20,12 @@ from mcp import ClientSession, McpError
 from mcp.types import GetTaskResult, TaskStatusNotification
 from pydantic import AnyUrl
 
-import fastmcp
+import fastmcp as fastmcp
 from fastmcp.client.auth.oauth import OAuth
-from fastmcp.client.elicitation import ElicitationHandler, create_elicitation_callback
+from fastmcp.client.elicitation import (
+    ElicitationHandler,
+    create_elicitation_callback,
+)
 from fastmcp.client.logging import (
     LogHandler,
     create_log_callback,
@@ -52,13 +55,17 @@ from fastmcp.client.tasks import (
     ToolTask,
 )
 from fastmcp.mcp_config import MCPConfig
-from fastmcp.server import FastMCP
 from fastmcp.utilities.exceptions import get_catch_handlers
 from fastmcp.utilities.logging import get_logger
 from fastmcp.utilities.timeout import (
     normalize_timeout_to_seconds,
     normalize_timeout_to_timedelta,
 )
+
+if TYPE_CHECKING:
+    from fastmcp.server import FastMCP
+else:
+    FastMCP = Any
 
 from .transports import (
     ClientTransport,

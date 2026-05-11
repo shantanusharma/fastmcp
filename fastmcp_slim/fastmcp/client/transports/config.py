@@ -1,7 +1,7 @@
 import contextlib
 import datetime
 from collections.abc import AsyncIterator
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from mcp import ClientSession
 from typing_extensions import Unpack
@@ -15,9 +15,12 @@ from fastmcp.mcp_config import (
     StdioMCPServer,
     TransformingRemoteMCPServer,
     TransformingStdioMCPServer,
+    _coerce_tool_transform_configs,
 )
-from fastmcp.server.server import FastMCP, create_proxy
 from fastmcp.utilities.logging import get_logger
+
+if TYPE_CHECKING:
+    from fastmcp.server.server import FastMCP
 
 logger = get_logger(__name__)
 
@@ -98,6 +101,14 @@ class MCPConfigTransport(ClientTransport):
         # each ProxyClient so its underlying transport session stays alive for
         # the duration of this context (fixes session persistence for
         # streamable-http backends — see #2790).
+        try:
+            from fastmcp.server.server import FastMCP
+        except ImportError as exc:
+            raise ImportError(
+                "MCP configs with multiple servers require the full `fastmcp` "
+                "package for now. Install it with `pip install fastmcp`."
+            ) from exc
+
         timeout = session_kwargs.get("read_timeout_seconds")
         composite = FastMCP[Any](name="MCPRouter")
 
@@ -138,7 +149,7 @@ class MCPConfigTransport(ClientTransport):
         config: MCPServerTypes,
         timeout: datetime.timedelta | None,
         stack: contextlib.AsyncExitStack,
-    ) -> tuple[ClientTransport, Any, FastMCP[Any]]:
+    ) -> tuple[ClientTransport, Any, "FastMCP[Any]"]:
         """Create underlying transport, proxy client, and proxy server for a single backend.
 
         The ProxyClient is connected via the AsyncExitStack *before* being
@@ -149,6 +160,7 @@ class MCPConfigTransport(ClientTransport):
         """
         # Import here to avoid circular dependency
         from fastmcp.server.providers.proxy import StatefulProxyClient
+        from fastmcp.server.server import create_proxy
 
         tool_transforms = None
         include_tags = None
@@ -194,7 +206,9 @@ class MCPConfigTransport(ClientTransport):
         if tool_transforms:
             from fastmcp.server.transforms import ToolTransform
 
-            proxy.add_transform(ToolTransform(tool_transforms))
+            proxy.add_transform(
+                ToolTransform(_coerce_tool_transform_configs(tool_transforms))
+            )
         # Then add enabled filters - they filter based on tags
         if include_tags:
             proxy.enable(tags=set(include_tags), only=True)

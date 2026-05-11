@@ -1,4 +1,3 @@
-# Re-export all public APIs for backward compatibility
 from mcp.server.fastmcp import FastMCP as FastMCP1Server
 
 from fastmcp.client.transports.base import (
@@ -20,7 +19,6 @@ from fastmcp.client.transports.stdio import (
     UvStdioTransport,
     UvxStdioTransport,
 )
-from fastmcp.server.server import FastMCP
 
 __all__ = [
     "ClientTransport",

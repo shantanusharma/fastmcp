@@ -58,7 +58,7 @@ def create_sampling_callback(
             if isinstance(result, str):
                 result = CreateMessageResult(
                     role="assistant",
-                    model="fastmcp-client",
+                    model="fastmcp-slim",
                     content=mcp.types.TextContent(type="text", text=result),
                 )
             return result

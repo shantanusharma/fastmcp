@@ -2,7 +2,12 @@
 
 import logging
 
-from mcp import McpError  # noqa: F401
+try:
+    from mcp import McpError
+except ImportError:
+
+    class McpError(Exception):  # type: ignore[no-redef]
+        """Fallback used when MCP dependencies are not installed."""
 
 
 class FastMCPDeprecationWarning(DeprecationWarning):

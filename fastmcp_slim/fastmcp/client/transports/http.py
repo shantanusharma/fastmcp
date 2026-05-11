@@ -1,29 +1,31 @@
-"""Server-Sent Events (SSE) transport for FastMCP Client."""
+"""Streamable HTTP transport for FastMCP Client."""
 
 from __future__ import annotations
 
 import contextlib
 import datetime
 import ssl
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from typing import Any, Literal, cast
 
 import httpx
 from mcp import ClientSession
-from mcp.client.sse import sse_client
-from mcp.shared._httpx_utils import McpHttpClientFactory
+from mcp.client.streamable_http import streamable_http_client
+from mcp.shared._httpx_utils import McpHttpClientFactory, create_mcp_http_client
 from pydantic import AnyUrl
 from typing_extensions import Unpack
 
+import fastmcp as fastmcp
 from fastmcp.client.auth.bearer import BearerAuth
 from fastmcp.client.auth.oauth import OAuth
+from fastmcp.client.dependencies import get_http_headers
 from fastmcp.client.transports.base import ClientTransport, SessionKwargs
-from fastmcp.server.dependencies import get_http_headers
+from fastmcp.exceptions import FastMCPDeprecationWarning
 from fastmcp.utilities.timeout import normalize_timeout_to_timedelta
 
 
-class SSETransport(ClientTransport):
-    """Transport implementation that connects to an MCP server via Server-Sent Events."""
+class StreamableHttpTransport(ClientTransport):
+    """Transport implementation that connects to an MCP server via Streamable HTTP Requests."""
 
     def __init__(
         self,
@@ -34,10 +36,27 @@ class SSETransport(ClientTransport):
         httpx_client_factory: McpHttpClientFactory | None = None,
         verify: ssl.SSLContext | bool | str | None = None,
     ):
+        """Initialize a Streamable HTTP transport.
+
+        Args:
+            url: The MCP server endpoint URL.
+            headers: Optional headers to include in requests.
+            auth: Authentication method - httpx.Auth, "oauth" for OAuth flow,
+                or a bearer token string.
+            sse_read_timeout: Deprecated. Use read_timeout_seconds in session_kwargs.
+            httpx_client_factory: Optional factory for creating httpx.AsyncClient.
+                If provided, must accept keyword arguments: headers, auth,
+                follow_redirects, and optionally timeout. Using **kwargs is
+                recommended to ensure forward compatibility.
+            verify: SSL certificate verification. Accepts False to disable
+                verification, a path to a CA bundle, or an ssl.SSLContext
+                for full control. None (default) uses httpx defaults (verification
+                enabled). Ignored when httpx_client_factory is provided.
+        """
         if isinstance(url, AnyUrl):
             url = str(url)
         if not isinstance(url, str) or not url.startswith("http"):
-            raise ValueError("Invalid HTTP/S URL provided for SSE.")
+            raise ValueError("Invalid HTTP/S URL provided for Streamable HTTP.")
 
         # Don't modify the URL path - respect the exact URL provided by the user
         # Some servers are strict about trailing slashes (e.g., PayPal MCP)
@@ -61,9 +80,23 @@ class SSETransport(ClientTransport):
 
         self._set_auth(auth)
 
+        if sse_read_timeout is not None:
+            if fastmcp.settings.deprecation_warnings:
+                import warnings
+
+                warnings.warn(
+                    "The `sse_read_timeout` parameter is deprecated and no longer used. "
+                    "The new streamable_http_client API does not support this parameter. "
+                    "Use `read_timeout_seconds` in session_kwargs or configure timeout on "
+                    "the httpx client via `httpx_client_factory` instead.",
+                    FastMCPDeprecationWarning,
+                    stacklevel=2,
+                )
+        self.sse_read_timeout = normalize_timeout_to_timedelta(sse_read_timeout)
+
         self.forward_incoming_headers: bool = False
 
-        self.sse_read_timeout = normalize_timeout_to_timedelta(sse_read_timeout)
+        self._get_session_id_cb: Callable[[], str | None] | None = None
 
     def _set_auth(self, auth: httpx.Auth | Literal["oauth"] | str | None):
         resolved: httpx.Auth | None
@@ -117,42 +150,71 @@ class SSETransport(ClientTransport):
     async def connect_session(
         self, **session_kwargs: Unpack[SessionKwargs]
     ) -> AsyncIterator[ClientSession]:
-        client_kwargs: dict[str, Any] = {}
-
         # When used in a proxy, forward the inbound request's authorization
         # header to the upstream server. This is off by default so that a
         # plain Client used inside a server tool handler doesn't accidentally
         # leak the caller's credentials to an unrelated remote server.
         if self.forward_incoming_headers:
-            client_kwargs["headers"] = (
-                get_http_headers(include={"authorization"}) | self.headers
-            )
+            headers = get_http_headers(include={"authorization"}) | self.headers
         else:
-            client_kwargs["headers"] = dict(self.headers)
+            headers = dict(self.headers)
 
-        # sse_read_timeout has a default value set, so we can't pass None without overriding it
-        # instead we simply leave the kwarg out if it's not provided
-        if self.sse_read_timeout is not None:
-            client_kwargs["sse_read_timeout"] = self.sse_read_timeout.total_seconds()
+        # Configure timeout if provided, preserving MCP's 30s connect default
+        timeout: httpx.Timeout | None = None
         if session_kwargs.get("read_timeout_seconds") is not None:
             read_timeout_seconds = cast(
                 datetime.timedelta, session_kwargs.get("read_timeout_seconds")
             )
-            client_kwargs["timeout"] = read_timeout_seconds.total_seconds()
+            timeout = httpx.Timeout(30.0, read=read_timeout_seconds.total_seconds())
 
+        # Create httpx client from factory or use default with MCP-appropriate
+        # timeouts. Note: create_mcp_http_client enables follow_redirects, but
+        # httpx automatically strips Authorization headers on cross-origin
+        # redirects to prevent credential leakage.
+        verify_factory = self._make_verify_factory()
         if self.httpx_client_factory is not None:
-            client_kwargs["httpx_client_factory"] = self.httpx_client_factory
+            http_client = self.httpx_client_factory(
+                headers=headers,
+                auth=self.auth,
+                follow_redirects=True,  # type: ignore[call-arg]  # ty:ignore[unknown-argument]
+                **({"timeout": timeout} if timeout else {}),
+            )
+        elif verify_factory is not None:
+            http_client = verify_factory(
+                headers=headers,
+                timeout=timeout,
+                auth=self.auth,
+            )
         else:
-            verify_factory = self._make_verify_factory()
-            if verify_factory is not None:
-                client_kwargs["httpx_client_factory"] = verify_factory
+            http_client = create_mcp_http_client(
+                headers=headers,
+                timeout=timeout,
+                auth=self.auth,
+            )
 
-        async with sse_client(self.url, auth=self.auth, **client_kwargs) as transport:
-            read_stream, write_stream = transport
+        # Ensure httpx client is closed after use
+        async with (
+            http_client,
+            streamable_http_client(self.url, http_client=http_client) as transport,
+        ):
+            read_stream, write_stream, get_session_id = transport
+            self._get_session_id_cb = get_session_id
             async with ClientSession(
                 read_stream, write_stream, **session_kwargs
             ) as session:
                 yield session
 
+    def get_session_id(self) -> str | None:
+        if self._get_session_id_cb:
+            try:
+                return self._get_session_id_cb()
+            except Exception:
+                return None
+        return None
+
+    async def close(self):
+        # Reset the session id callback
+        self._get_session_id_cb = None
+
     def __repr__(self) -> str:
-        return f"<SSETransport(url='{self.url}')>"
+        return f"<StreamableHttpTransport(url='{self.url}')>"

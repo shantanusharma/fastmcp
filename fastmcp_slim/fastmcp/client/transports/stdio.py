@@ -14,7 +14,6 @@ from typing_extensions import Unpack
 
 from fastmcp.client.transports.base import ClientTransport, SessionKwargs
 from fastmcp.utilities.logging import get_logger
-from fastmcp.utilities.mcp_server_config.v1.environments.uv import UVEnvironment
 
 logger = get_logger(__name__)
 
@@ -385,20 +384,18 @@ class UvStdioTransport(StdioTransport):
                 f"Project directory not found: {project_directory}"
             )
 
-        # Create Environment from provided parameters (internal use)
-        env_config = UVEnvironment(
-            python=python_version,
-            dependencies=with_packages,
-            requirements=with_requirements,
-            project=project_directory,
-            editable=None,  # Not exposed in this transport
-        )
-
         # Build uv arguments using the config
         uv_args: list[str] = []
 
         # Check if we need any environment setup
-        if env_config._must_run_with_uv():
+        if any(
+            [
+                python_version,
+                with_packages,
+                with_requirements,
+                project_directory,
+            ]
+        ):
             # Use the config to build args, but we need to handle the command differently
             # since transport has specific needs
             uv_args = ["run"]

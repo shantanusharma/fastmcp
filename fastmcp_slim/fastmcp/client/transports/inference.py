@@ -9,13 +9,17 @@ from fastmcp.client.transports.config import MCPConfigTransport
 from fastmcp.client.transports.http import StreamableHttpTransport
 from fastmcp.client.transports.memory import FastMCPTransport
 from fastmcp.client.transports.sse import SSETransport
-from fastmcp.client.transports.stdio import NodeStdioTransport, PythonStdioTransport
+from fastmcp.client.transports.stdio import (
+    NodeStdioTransport,
+    PythonStdioTransport,
+)
 from fastmcp.mcp_config import MCPConfig, infer_transport_type_from_url
-from fastmcp.server.server import FastMCP
 from fastmcp.utilities.logging import get_logger
 
 if TYPE_CHECKING:
-    pass
+    from fastmcp.server.server import FastMCP
+else:
+    FastMCP = Any
 
 logger = get_logger(__name__)
 
@@ -114,9 +118,9 @@ def infer_transport(
         return transport
 
     # the transport is a FastMCP server (2.x or 1.0)
-    elif isinstance(transport, FastMCP | FastMCP1Server):
+    elif _is_fastmcp_server(transport):
         inferred_transport = FastMCPTransport(
-            mcp=cast(FastMCP[Any] | FastMCP1Server, transport)
+            mcp=cast("FastMCP[Any] | FastMCP1Server", transport)
         )
 
     # the transport is a path to a script
@@ -152,3 +156,15 @@ def infer_transport(
 
     logger.debug(f"Inferred transport: {inferred_transport}")
     return inferred_transport
+
+
+def _is_fastmcp_server(transport: object) -> bool:
+    if isinstance(transport, FastMCP1Server):
+        return True
+
+    try:
+        from fastmcp.server.server import FastMCP as FastMCP2Server
+    except ImportError:
+        return False
+
+    return isinstance(transport, FastMCP2Server)
