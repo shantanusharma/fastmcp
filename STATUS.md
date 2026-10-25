@@ -1,6 +1,6 @@
 # FastMCP maintenance status
 
-As of 2026-10-24T16:25:56Z. Generated twice a day by [maintenance-status](https://github.com/PrefectHQ/fastmcp/actions/workflows/maintenance-status.yml); machine-readable as [status.json](status.json). How the project is run: [Development guide](https://github.com/PrefectHQ/fastmcp/blob/main/docs/development/contributing.mdx#maintenance-and-automation).
+As of 2026-10-25T03:18:56Z. Generated twice a day by [maintenance-status](https://github.com/PrefectHQ/fastmcp/actions/workflows/maintenance-status.yml); machine-readable as [status.json](status.json). How the project is run: [Development guide](https://github.com/PrefectHQ/fastmcp/blob/main/docs/development/contributing.mdx#maintenance-and-automation).
 
 | automation | state | last ok | runs on | cadence |
 |---|---|---|---|---|
@@ -11,12 +11,12 @@ As of 2026-10-24T16:25:56Z. Generated twice a day by [maintenance-status](https:
 | [bug investigation](https://github.com/PrefectHQ/fastmcp/actions/workflows/marvin-triage-issue.yml) | idle | — | github-actions | on each qualifying new issue |
 | [CI failure analysis](https://github.com/PrefectHQ/fastmcp/actions/workflows/marvin-test-failure.yml) | ok | 2026-10-24 | github-actions | after each failed PR run |
 | [maintainer commands](https://github.com/PrefectHQ/fastmcp/actions/workflows/marvin-comment-on-issue.yml) | degraded | — | github-actions | on a maintainer's comment |
-| [upgrade checks](https://github.com/PrefectHQ/fastmcp/actions/workflows/run-upgrade-checks.yml) | degraded | 2026-10-12 | github-actions | nightly |
+| [upgrade checks](https://github.com/PrefectHQ/fastmcp/actions/workflows/run-upgrade-checks.yml) | ok | 2026-10-25 | github-actions | nightly |
 | [release publishing](https://github.com/PrefectHQ/fastmcp/actions/workflows/publish-fastmcp-slim.yml) | ok | 2026-10-20 | github-actions | on each release |
 | [docs deploy](https://github.com/PrefectHQ/fastmcp/actions/workflows/deploy-docs.yml) | ok | 2026-10-21 | github-actions | on each docs publication |
-| [contributor queue](https://github.com/PrefectHQ/fastmcp/pulls?q=is%3Apr+is%3Aopen+label%3Amissing-issue-link) | ok | 2026-10-24 | github-actions | twice daily |
+| [contributor queue](https://github.com/PrefectHQ/fastmcp/pulls?q=is%3Apr+is%3Aopen+label%3Amissing-issue-link) | ok | 2026-10-25 | github-actions | twice daily |
 
-**Contributor queue:** 92 PRs waiting on assignment; the oldest has waited 41 days, and 37 have waited more than a week.
+**Contributor queue:** 95 PRs waiting on assignment; the oldest has waited 41 days, and 39 have waited more than a week.
 
 **Needs a maintainer's judgment:**
 
