@@ -1,7 +1,7 @@
 {
   "schema": "fastmcp-maintenance/1",
   "publisher": "fastmcp-actions",
-  "as_of": "2026-10-30T21:33:10Z",
+  "as_of": "2026-10-31T00:19:40Z",
   "automations": [
     {
       "id": "issue-link-gate",
@@ -14,16 +14,10 @@
       "evidence_url": "https://github.com/PrefectHQ/fastmcp/actions/workflows/require-issue-link.yml",
       "window": "7d",
       "counts": {
-        "passed": 109,
-        "blocked": 85
+        "passed": 112,
+        "blocked": 78
       },
       "daily": [
-        {
-          "day": "2026-10-24",
-          "succeeded": 2,
-          "failed": 0,
-          "blocked": 8
-        },
         {
           "day": "2026-10-25",
           "succeeded": 11,
@@ -56,9 +50,15 @@
         },
         {
           "day": "2026-10-30",
-          "succeeded": 14,
+          "succeeded": 19,
           "failed": 0,
-          "blocked": 4
+          "blocked": 5
+        },
+        {
+          "day": "2026-10-31",
+          "succeeded": 0,
+          "failed": 0,
+          "blocked": 0
         }
       ]
     },
@@ -73,16 +73,10 @@
       "evidence_url": "https://github.com/PrefectHQ/fastmcp/actions/workflows/marvin-label-triage.yml",
       "window": "7d",
       "counts": {
-        "succeeded": 169,
+        "succeeded": 165,
         "failed": 0
       },
       "daily": [
-        {
-          "day": "2026-10-24",
-          "succeeded": 10,
-          "failed": 0,
-          "blocked": 0
-        },
         {
           "day": "2026-10-25",
           "succeeded": 27,
@@ -115,7 +109,13 @@
         },
         {
           "day": "2026-10-30",
-          "succeeded": 9,
+          "succeeded": 15,
+          "failed": 0,
+          "blocked": 0
+        },
+        {
+          "day": "2026-10-31",
+          "succeeded": 0,
           "failed": 0,
           "blocked": 0
         }
@@ -132,16 +132,10 @@
       "evidence_url": "https://github.com/PrefectHQ/fastmcp/actions/workflows/marvin-dedupe-issues.yml",
       "window": "7d",
       "counts": {
-        "succeeded": 54,
+        "succeeded": 50,
         "failed": 0
       },
       "daily": [
-        {
-          "day": "2026-10-24",
-          "succeeded": 4,
-          "failed": 0,
-          "blocked": 0
-        },
         {
           "day": "2026-10-25",
           "succeeded": 12,
@@ -175,6 +169,12 @@
         {
           "day": "2026-10-30",
           "succeeded": 2,
+          "failed": 0,
+          "blocked": 0
+        },
+        {
+          "day": "2026-10-31",
+          "succeeded": 0,
           "failed": 0,
           "blocked": 0
         }
@@ -191,16 +191,10 @@
       "evidence_url": "https://github.com/PrefectHQ/fastmcp/actions/workflows/auto-close-duplicates.yml",
       "window": "7d",
       "counts": {
-        "succeeded": 14,
+        "succeeded": 12,
         "failed": 0
       },
       "daily": [
-        {
-          "day": "2026-10-24",
-          "succeeded": 2,
-          "failed": 0,
-          "blocked": 0
-        },
         {
           "day": "2026-10-25",
           "succeeded": 2,
@@ -234,6 +228,12 @@
         {
           "day": "2026-10-30",
           "succeeded": 2,
+          "failed": 0,
+          "blocked": 0
+        },
+        {
+          "day": "2026-10-31",
+          "succeeded": 0,
           "failed": 0,
           "blocked": 0
         }
@@ -255,12 +255,6 @@
       },
       "daily": [
         {
-          "day": "2026-10-24",
-          "succeeded": 0,
-          "failed": 0,
-          "blocked": 0
-        },
-        {
           "day": "2026-10-25",
           "succeeded": 0,
           "failed": 0,
@@ -295,6 +289,12 @@
           "succeeded": 0,
           "failed": 0,
           "blocked": 0
+        },
+        {
+          "day": "2026-10-31",
+          "succeeded": 0,
+          "failed": 0,
+          "blocked": 0
         }
       ]
     },
@@ -309,16 +309,10 @@
       "evidence_url": "https://github.com/PrefectHQ/fastmcp/actions/workflows/marvin-test-failure.yml",
       "window": "7d",
       "counts": {
-        "succeeded": 600,
+        "succeeded": 612,
         "failed": 6
       },
       "daily": [
-        {
-          "day": "2026-10-24",
-          "succeeded": 18,
-          "failed": 0,
-          "blocked": 0
-        },
         {
           "day": "2026-10-25",
           "succeeded": 47,
@@ -351,8 +345,14 @@
         },
         {
           "day": "2026-10-30",
-          "succeeded": 61,
+          "succeeded": 91,
           "failed": 1,
+          "blocked": 0
+        },
+        {
+          "day": "2026-10-31",
+          "succeeded": 0,
+          "failed": 0,
           "blocked": 0
         }
       ]
@@ -368,16 +368,10 @@
       "evidence_url": "https://github.com/PrefectHQ/fastmcp/actions/workflows/marvin-comment-on-issue.yml",
       "window": "7d",
       "counts": {
-        "succeeded": 30,
-        "failed": 79
+        "succeeded": 35,
+        "failed": 74
       },
       "daily": [
-        {
-          "day": "2026-10-24",
-          "succeeded": 0,
-          "failed": 5,
-          "blocked": 0
-        },
         {
           "day": "2026-10-25",
           "succeeded": 0,
@@ -410,8 +404,14 @@
         },
         {
           "day": "2026-10-30",
-          "succeeded": 9,
+          "succeeded": 14,
           "failed": 3,
+          "blocked": 0
+        },
+        {
+          "day": "2026-10-31",
+          "succeeded": 0,
+          "failed": 0,
           "blocked": 0
         }
       ]
@@ -428,15 +428,9 @@
       "window": "7d",
       "counts": {
         "succeeded": 5,
-        "failed": 2
+        "failed": 1
       },
       "daily": [
-        {
-          "day": "2026-10-24",
-          "succeeded": 0,
-          "failed": 1,
-          "blocked": 0
-        },
         {
           "day": "2026-10-25",
           "succeeded": 1,
@@ -470,6 +464,12 @@
         {
           "day": "2026-10-30",
           "succeeded": 1,
+          "failed": 0,
+          "blocked": 0
+        },
+        {
+          "day": "2026-10-31",
+          "succeeded": 0,
           "failed": 0,
           "blocked": 0
         }
@@ -491,12 +491,6 @@
       },
       "daily": [
         {
-          "day": "2026-10-24",
-          "succeeded": 0,
-          "failed": 0,
-          "blocked": 0
-        },
-        {
           "day": "2026-10-25",
           "succeeded": 0,
           "failed": 0,
@@ -531,6 +525,12 @@
           "succeeded": 0,
           "failed": 0,
           "blocked": 0
+        },
+        {
+          "day": "2026-10-31",
+          "succeeded": 0,
+          "failed": 0,
+          "blocked": 0
         }
       ]
     },
@@ -549,12 +549,6 @@
         "failed": 0
       },
       "daily": [
-        {
-          "day": "2026-10-24",
-          "succeeded": 0,
-          "failed": 0,
-          "blocked": 0
-        },
         {
           "day": "2026-10-25",
           "succeeded": 0,
@@ -587,6 +581,12 @@
         },
         {
           "day": "2026-10-30",
+          "succeeded": 0,
+          "failed": 0,
+          "blocked": 0
+        },
+        {
+          "day": "2026-10-31",
           "succeeded": 0,
           "failed": 0,
           "blocked": 0
@@ -662,34 +662,34 @@
       "cadence": "twice daily",
       "runs_on": "github-actions",
       "state": "ok",
-      "last_ok_day": "2026-10-30",
+      "last_ok_day": "2026-10-31",
       "evidence_url": "https://github.com/PrefectHQ/fastmcp/pulls?q=is%3Apr+is%3Aopen+label%3Amissing-issue-link",
       "window": "now",
       "counts": {
-        "waiting": 114,
+        "waiting": 115,
         "oldest_days": 47,
         "waiting_over_7_days": 81
       }
     }
   ],
   "main": {
-    "sha": "d0d49feee82868feedda3391eed3a1fe5e0dafe3",
-    "url": "https://github.com/PrefectHQ/fastmcp/commit/d0d49feee82868feedda3391eed3a1fe5e0dafe3",
+    "sha": "87ae02a790f3f9af24590990123c1c2e89270ffc",
+    "url": "https://github.com/PrefectHQ/fastmcp/commit/87ae02a790f3f9af24590990123c1c2e89270ffc",
     "checks": [
       {
         "name": "Tests",
         "state": "ok",
-        "url": "https://github.com/PrefectHQ/fastmcp/actions/runs/41128304208"
+        "url": "https://github.com/PrefectHQ/fastmcp/actions/runs/41136241418"
       },
       {
         "name": "Run static analysis",
         "state": "ok",
-        "url": "https://github.com/PrefectHQ/fastmcp/actions/runs/41128303706"
+        "url": "https://github.com/PrefectHQ/fastmcp/actions/runs/41136241427"
       },
       {
         "name": "CodeQL",
         "state": "ok",
-        "url": "https://github.com/PrefectHQ/fastmcp/actions/runs/41128303050"
+        "url": "https://github.com/PrefectHQ/fastmcp/actions/runs/41136241137"
       }
     ]
   },
@@ -707,7 +707,7 @@
   "attention": {
     "schema": "fastmcp-attention/1",
     "repo": "PrefectHQ/fastmcp",
-    "as_of": "2026-10-30T21:31:25.861113+00:00",
+    "as_of": "2026-10-31T00:17:54.286103+00:00",
     "profile": "public-issue-signals",
     "judge": "jev",
     "assessment_model": "jev:jev-latest",
@@ -10214,82 +10214,6 @@
         "linked_prs": []
       },
       {
-        "number": 6034,
-        "title": "compress_schema prunes used $defs when $ref uses JSON Pointer escapes (~0, ~1), percent-encoding, or sub-paths",
-        "url": "https://github.com/PrefectHQ/fastmcp/issues/6034",
-        "updated_at": "2026-10-25T19:04:54+00:00",
-        "score": 7.15,
-        "kind": "bug",
-        "judged": true,
-        "assessment": {
-          "kind": {
-            "bug": 1.0,
-            "regression": 0.0,
-            "feature": 0.0,
-            "question": 0.0,
-            "docs": 0.0,
-            "other": 0.0
-          },
-          "repro": 0.97,
-          "actionable": 1.0,
-          "severity": 0.7733333333333333,
-          "security": 0.03,
-          "spec": 0.14,
-          "downstream": 0.06
-        },
-        "input_digest": "ae94abe1668fccd152f831cd9a4250bbdd93481b2c1c41b92d0ecec18a451dfe",
-        "reasons": [
-          {
-            "signal": "severity",
-            "text": "potential impact",
-            "contribution": 2.32
-          },
-          {
-            "signal": "neglect",
-            "text": "awaiting maintainer reply",
-            "contribution": 1.5
-          },
-          {
-            "signal": "repro",
-            "text": "reproduction provided",
-            "contribution": 1.46
-          },
-          {
-            "signal": "actionable",
-            "text": "actionable report",
-            "contribution": 1.0
-          },
-          {
-            "signal": "regression",
-            "text": "possible regression",
-            "contribution": 0.33
-          },
-          {
-            "signal": "release_proximity",
-            "text": "reported near a relevant release",
-            "contribution": 0.2
-          },
-          {
-            "signal": "spec",
-            "text": "protocol conformance",
-            "contribution": 0.14
-          },
-          {
-            "signal": "security",
-            "text": "security-sensitive report",
-            "contribution": 0.12
-          },
-          {
-            "signal": "downstream",
-            "text": "downstream integration affected",
-            "contribution": 0.09
-          }
-        ],
-        "maintainer_replied": false,
-        "assigned": false,
-        "linked_prs": []
-      },
-      {
         "number": 326,
         "title": "client.set_roots and send_roots_list_changed not update the roots",
         "url": "https://github.com/PrefectHQ/fastmcp/issues/326",
@@ -17248,6 +17172,89 @@
         "assigned": false,
         "linked_prs": [
           5861
+        ]
+      },
+      {
+        "number": 6034,
+        "title": "compress_schema prunes used $defs when $ref uses JSON Pointer escapes (~0, ~1), percent-encoding, or sub-paths",
+        "url": "https://github.com/PrefectHQ/fastmcp/issues/6034",
+        "updated_at": "2026-10-25T19:04:54+00:00",
+        "score": 5.65,
+        "kind": "bug",
+        "judged": true,
+        "assessment": {
+          "kind": {
+            "bug": 1.0,
+            "regression": 0.0,
+            "feature": 0.0,
+            "question": 0.0,
+            "docs": 0.0,
+            "other": 0.0
+          },
+          "repro": 0.97,
+          "actionable": 1.0,
+          "severity": 0.7733333333333333,
+          "security": 0.03,
+          "spec": 0.14,
+          "downstream": 0.06
+        },
+        "input_digest": "ae94abe1668fccd152f831cd9a4250bbdd93481b2c1c41b92d0ecec18a451dfe",
+        "reasons": [
+          {
+            "signal": "severity",
+            "text": "potential impact",
+            "contribution": 2.32
+          },
+          {
+            "signal": "neglect",
+            "text": "awaiting maintainer reply",
+            "contribution": 1.5
+          },
+          {
+            "signal": "handled",
+            "text": "assigned or linked to a fix",
+            "contribution": -1.5
+          },
+          {
+            "signal": "repro",
+            "text": "reproduction provided",
+            "contribution": 1.46
+          },
+          {
+            "signal": "actionable",
+            "text": "actionable report",
+            "contribution": 1.0
+          },
+          {
+            "signal": "regression",
+            "text": "possible regression",
+            "contribution": 0.33
+          },
+          {
+            "signal": "release_proximity",
+            "text": "reported near a relevant release",
+            "contribution": 0.2
+          },
+          {
+            "signal": "spec",
+            "text": "protocol conformance",
+            "contribution": 0.14
+          },
+          {
+            "signal": "security",
+            "text": "security-sensitive report",
+            "contribution": 0.12
+          },
+          {
+            "signal": "downstream",
+            "text": "downstream integration affected",
+            "contribution": 0.09
+          }
+        ],
+        "maintainer_replied": false,
+        "assigned": false,
+        "linked_prs": [
+          6180
         ]
       },
       {
