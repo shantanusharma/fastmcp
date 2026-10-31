@@ -1,10 +1,10 @@
 # FastMCP maintenance status
 
-As of 2026-10-31T17:30:06Z. Generated twice a day by [maintenance-status](https://github.com/PrefectHQ/fastmcp/actions/workflows/maintenance-status.yml); machine-readable as [status.json](status.json). How the project is run: [Development guide](https://github.com/PrefectHQ/fastmcp/blob/main/docs/development/contributing.mdx#maintenance-and-automation).
+As of 2026-10-31T23:55:47Z. Generated twice a day by [maintenance-status](https://github.com/PrefectHQ/fastmcp/actions/workflows/maintenance-status.yml); machine-readable as [status.json](status.json). How the project is run: [Development guide](https://github.com/PrefectHQ/fastmcp/blob/main/docs/development/contributing.mdx#maintenance-and-automation).
 
 | automation | state | last ok | runs on | cadence |
 |---|---|---|---|---|
-| [issue-link gate](https://github.com/PrefectHQ/fastmcp/actions/workflows/require-issue-link.yml) | ok | 2026-10-31 | github-actions | on each external PR change and each issue assignment |
+| [issue-link gate](https://github.com/PrefectHQ/fastmcp/actions/workflows/require-issue-link.yml) | ok | — | github-actions | on each external PR change and each issue assignment |
 | [labeling](https://github.com/PrefectHQ/fastmcp/actions/workflows/marvin-label-triage.yml) | ok | 2026-10-31 | github-actions | on each new issue or PR |
 | [duplicate detection](https://github.com/PrefectHQ/fastmcp/actions/workflows/marvin-dedupe-issues.yml) | ok | 2026-10-31 | github-actions | on each new issue |
 | [auto-close](https://github.com/PrefectHQ/fastmcp/actions/workflows/auto-close-duplicates.yml) | ok | 2026-10-31 | github-actions | daily |
@@ -16,7 +16,7 @@ As of 2026-10-31T17:30:06Z. Generated twice a day by [maintenance-status](https:
 | [docs deploy](https://github.com/PrefectHQ/fastmcp/actions/workflows/deploy-docs.yml) | ok | 2026-10-27 | github-actions | on each docs publication |
 | [contributor queue](https://github.com/PrefectHQ/fastmcp/pulls?q=is%3Apr+is%3Aopen+label%3Amissing-issue-link) | ok | 2026-10-31 | github-actions | twice daily |
 
-**Contributor queue:** 122 PRs waiting on assignment; the oldest has waited 48 days, and 81 have waited more than a week.
+**Contributor queue:** 125 PRs waiting on assignment; the oldest has waited 48 days, and 81 have waited more than a week.
 
 **Needs a maintainer's judgment:**
 
